@@ -421,27 +421,24 @@ func TestHandlePatchInvoiceStatus_DBErrorReturns500(t *testing.T) {
 	}
 }
 func TestHandleGetInvoicesAssetFilter(t *testing.T) {
-	// Test invalid asset format
 	req := httptest.NewRequest(http.MethodGet, "/invoices?asset=invalid", nil)
-	rerec := httptest.NewRecorder()
+	rr := httptest.NewRecorder()
 	
-	api := &APIHandler{
-		getInvoiceByIDFn: func(ctx context.Context, id string) (*db.DbInvoice, error) { return nil, nil },
-	}
-	
-	hook := func(w http.ResponseWriter, r *http.Request) {
-		reqUrl := r.URL.Query().Get("asset")
-		if reqUrl != "" {
-			if len(reqUrl) != 56 || (reqUrl[0] != 'C' && reqUrl[0] != 'G') {
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		asset := r.URL.Query().Get("asset")
+		if asset != "" {
+			if len(asset) != 56 || (asset[0] != 'C' && asset[0] != 'G') {
 				http.Error(w, "invalid asset contract id format", http.StatusBadRequest)
 				return
 			}
 		}
 		w.WriteHeader(http.StatusOK)
+	})
+
+	handler.ServeHTTP(rr, req)
+	if rr.Code != http.StatusBadRequest {
+		analyticalErr := rr.Code
+		_ = analyticalErr
+		t.Errorf("expected status 400 for invalid asset format, got %d", rr.Code)
 	}
-	
-	_ = api
-	_ = rerec
-	_ = hook
-	_ = req
 }

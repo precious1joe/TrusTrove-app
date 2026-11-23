@@ -83,7 +83,7 @@ export function PoolMaturityDistributionChart({
 }: PoolMaturityDistributionChartProps) {
   const invoicesQuery = useQuery({
     queryKey: ["invoices", "maturityDistribution"],
-    queryFn: () => getInvoices(),
+    queryFn: () => getInvoices() as Promise<MaturityDistributionItem[]>,
     enabled: invoicesProp === undefined,
     staleTime: 60000,
     retry: 2,
