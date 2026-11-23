@@ -74,7 +74,7 @@ function formatRelativeTime(ledgerClosedAt: number): string {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
-function toFeedEntry(event: { id: number; event_type: string; ledger_closed_at: number; data?: Record<string, unknown> }): FeedEntry {
+function toFeedEntry(event: EventLog): FeedEntry {
   const invoiceId = getEventDataString(event, "invoice_id") ?? "";
   const invoiceShort = invoiceId
     ? `INV#${invoiceId.slice(0, 6)}…`

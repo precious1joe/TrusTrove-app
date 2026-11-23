@@ -46,7 +46,7 @@ export function calculateMaturityDistribution(
     if (inv.status && (inv.status === "Repaid" || inv.status === "Defaulted")) {
       continue;
     }
-    const rawAmt = typeof inv.fundedAmount === "bigint" ? Number(inv.fundedAmount) : Number(inv.fundedAmount || 0);
+    const rawAmt = typeof inv.fundedAmount === "bigint" ? Number(inv.fundedAmount) : Number(String(inv.fundedAmount || "0"));
     if (!Number.isFinite(rawAmt) || rawAmt <= 0) continue;
     const usdcAmt = rawAmt / STROOPS_PER_USDC;
     totalActive += usdcAmt;

@@ -420,7 +420,7 @@ func TestHandlePatchInvoiceStatus_DBErrorReturns500(t *testing.T) {
 		t.Errorf("expected 500 on db error, got %d", rr.Code)
 	}
 }
-func TestHandleGetInvoicesAssetFilter(goT *testing.T) {
+func TestHandleGetInvoicesAssetFilter(t *testing.T) {
 	// Test invalid asset format
 	req := httptest.NewRequest(http.MethodGet, "/invoices?asset=invalid", nil)
 	rerec := httptest.NewRecorder()
@@ -443,4 +443,5 @@ func TestHandleGetInvoicesAssetFilter(goT *testing.T) {
 	_ = api
 	_ = rerec
 	_ = hook
+	_ = req
 }

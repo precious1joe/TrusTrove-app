@@ -66,7 +66,7 @@ export function BuyerConcentrationChart({
       const buyerKey = inv.buyer && inv.buyer.trim() !== "" ? inv.buyer : undefined;
       if (!buyerKey) continue;
 
-      const amt = BigInt(inv.fundedAmount);
+      const amt = BigInt(String(inv.fundedAmount));
       grandTotal += amt;
       map.set(buyerKey, (map.get(buyerKey) ?? 0n) + amt);
     }
