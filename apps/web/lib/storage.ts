@@ -1,15 +1,3 @@
-/**
- * Shared `localStorage` key vocabulary for the web app.
- *
- * Two naming styles exist because the app grew them separately: namespaced
- * colon keys for global settings (`trusttrove:theme`, `trusttrove:display`,
- * `trusttrove:marketplace:filters`, …) and per-wallet underscore keys for
- * notification state (`trusttrove_prefs_<address>`,
- * `trusttrove_notifs_<address>`). Both styles are built here so a sweep that
- * means "everything the app owns" cannot silently miss a key written under the
- * other one (issue #1110).
- */
-
 /** Namespace every key this app writes starts with. */
 export const STORAGE_NAMESPACE = "trusttrove";
 
@@ -66,4 +54,25 @@ export function clearAppStorage(): string[] {
   }
   owned.forEach((key) => storage.removeItem(key));
   return owned;
+}
+
+export const REDUCED_DATA_STORAGE_KEY = "trusttrove_reduced_data_mode";
+
+export function readStoredReducedDataMode(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const val = localStorage.getItem(REDUCED_DATA_STORAGE_KEY);
+    return val === "true";
+  } catch {
+    return false;
+  }
+}
+
+export function storeReducedDataMode(enabled: boolean): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(REDUCED_DATA_STORAGE_KEY, enabled ? "true" : "false");
+  } catch {
+    // ignore storage errors
+  }
 }

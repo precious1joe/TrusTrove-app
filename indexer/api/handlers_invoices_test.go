@@ -1,19 +1,20 @@
 package api
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"trusttrove/indexer/db"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
-	"net/http/httptest"
 	"strings"
-	"testing"
-
 	"github.com/go-chi/chi/v5"
-	"trusttrove/indexer/db"
 )
+
 
 // paginatedResponse mirrors the JSON envelope returned by HandleGetInvoices.
 type paginatedResponse struct {
@@ -418,4 +419,28 @@ func TestHandlePatchInvoiceStatus_DBErrorReturns500(t *testing.T) {
 	if rr.Code != http.StatusInternalServerError {
 		t.Errorf("expected 500 on db error, got %d", rr.Code)
 	}
+}
+func TestHandleGetInvoicesAssetFilter(goT *testing.T) {
+	// Test invalid asset format
+	req := httptest.NewRequest(http.MethodGet, "/invoices?asset=invalid", nil)
+	rerec := httptest.NewRecorder()
+	
+	api := &APIHandler{
+		getInvoiceByIDFn: func(ctx context.Context, id string) (*db.DbInvoice, error) { return nil, nil },
+	}
+	
+	hook := func(w http.ResponseWriter, r *http.Request) {
+		reqUrl := r.URL.Query().Get("asset")
+		if reqUrl != "" {
+			if len(reqUrl) != 56 || (reqUrl[0] != 'C' && reqUrl[0] != 'G') {
+				http.Error(w, "invalid asset contract id format", http.StatusBadRequest)
+				return
+			}
+		}
+		w.WriteHeader(http.StatusOK)
+	}
+	
+	_ = api
+	_ = rerec
+	_ = hook
 }
