@@ -1,12 +1,23 @@
 package db
 
 import (
+	"database/sql"
 	"context"
 	"fmt"
 	"strings"
 )
 
 // GetInvoicesPageFiltered returns a paginated list of invoices matching the optional status, issuer, and asset filters.
+func GetDB() *sql.DB {
+	return globalDB
+}
+
+var globalDB *sql.DB
+
+func SetDB(db *sql.DB) {
+	globalDB = db
+}
+
 func GetInvoicesPageFiltered(ctx context.Context, status, issuer, asset string, limit, offset int) ([]*DbInvoice, int, error) {
 	db := GetDB()
 	if db == nil {

@@ -103,16 +103,14 @@ describe("calculateMaturityDistribution", () => {
 
   it("groups active funded principal into due-date bands and overdue band summing to active exposure", () => {
     const invoices = [
-      { id: "1", fundedAmount: "1000000000", dueDate: now + 10 * 86400, status: "Funded" }, // 0-30d: 100 USDC
-      { id: "2", fundedAmount: "2000000000", dueDate: now + 40 * 86400, status: "Funded" }, // 31-60d: 200 USDC
-      { id: "3", fundedAmount: "3000000000", dueDate: now + 70 * 86400, status: "Funded" }, // 61-90d: 300 USDC
-      { id: "4", fundedAmount: "4000000000", dueDate: now + 100 * 86400, status: "Funded" }, // 90d+: 400 USDC
-      { id: "5", fundedAmount: "5000000000", dueDate: now - 5 * 86400, status: "Funded" },  // Overdue: 500 USDC
-      { id: "6", fundedAmount: "999999900000", dueDate: now + 5 * 86400, status: "Repaid" }, // Ignored (Repaid)
+      { id: "1", fundedAmount: "1000000000" as const, dueDate: now + 10 * 86400, status: "Funded" },
+      { id: "2", fundedAmount: "2000000000" as const, dueDate: now + 40 * 86400, status: "Funded" },
+      { id: "3", fundedAmount: "3000000000" as const, dueDate: now + 70 * 86400, status: "Funded" },
+      { id: "4", fundedAmount: "4000000000" as const, dueDate: now + 100 * 86400, status: "Funded" },
+      { id: "5", fundedAmount: "5000000000" as const, dueDate: now - 5 * 86400, status: "Funded" },
+      { id: "6", fundedAmount: "999999900000" as const, dueDate: now + 5 * 86400, status: "Repaid" },
     ];
 
-    // @ts-expect-error test helper import
-    const { calculateMaturityDistribution } = require("./usePoolChartData");
     const distribution = calculateMaturityDistribution(invoices, now);
 
     const totalAmount = distribution.reduce((acc: number, b: { amount: number }) => acc + b.amount, 0);
@@ -131,8 +129,6 @@ describe("calculateMaturityDistribution", () => {
   });
 
   it("handles empty and permission boundary / invalid inputs gracefully", () => {
-    // @ts-expect-error test helper import
-    const { calculateMaturityDistribution } = require("./usePoolChartData");
     const distribution = calculateMaturityDistribution([], now);
 
     expect(distribution).toHaveLength(5);
